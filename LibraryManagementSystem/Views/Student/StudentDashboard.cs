@@ -193,7 +193,7 @@ namespace LibraryManagementSystem.Views.Student
                 RowHeadersVisible = false
             };
 
-            var allLoans = await _loanRepository.GetActiveLoansAsync();
+            var allLoans = await _loanRepository.GetAllLoansAsync();
             var studentLoans = allLoans.Where(l => l.StudentId == Session.CurrentUser?.UserId.ToString()).ToList();
             dgv.DataSource = studentLoans;
 

@@ -84,6 +84,7 @@ namespace LibraryManagementSystem.Views.Admin
 
         private async void SaveBook(Book book)
         {
+            book.AddedBy = Session.CurrentUser?.UserId ?? 1; // Fallback to 1 if no session
             bool success = await _bookRepository.AddBookAsync(book);
             if (success)
             {

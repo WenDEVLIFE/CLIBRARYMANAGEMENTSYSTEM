@@ -13,6 +13,8 @@ namespace LibraryManagementSystem.Views.Librarian
         private DataGridView dgvLoans;
         private Button btnNewLoan;
         private Button btnReturn;
+        private Button btnToggleHistory;
+        private bool _showHistory = false;
         private LoanRepository _loanRepository;
 
         public CirculationControl()
@@ -55,8 +57,26 @@ namespace LibraryManagementSystem.Views.Librarian
             btnReturn.FlatAppearance.BorderSize = 0;
             btnReturn.Click += BtnReturn_Click;
 
+            btnToggleHistory = new Button { 
+                Text = "Show All History", 
+                Width = 150, 
+                Height = 35, 
+                BackColor = Color.Gray, 
+                ForeColor = Color.White, 
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Location = new Point(btnReturn.Right + 10, 12)
+            };
+            btnToggleHistory.FlatAppearance.BorderSize = 0;
+            btnToggleHistory.Click += (s, e) => {
+                _showHistory = !_showHistory;
+                btnToggleHistory.Text = _showHistory ? "Show Active Only" : "Show All History";
+                LoadLoans();
+            };
+
             pnlToolbar.Controls.Add(btnNewLoan);
             pnlToolbar.Controls.Add(btnReturn);
+            pnlToolbar.Controls.Add(btnToggleHistory);
 
             dgvLoans = new DataGridView { 
                 Dock = DockStyle.Fill, 
@@ -75,7 +95,10 @@ namespace LibraryManagementSystem.Views.Librarian
 
         private async void LoadLoans()
         {
-            dgvLoans.DataSource = await _loanRepository.GetActiveLoansAsync();
+            if (_showHistory)
+                dgvLoans.DataSource = await _loanRepository.GetAllLoansAsync();
+            else
+                dgvLoans.DataSource = await _loanRepository.GetActiveLoansAsync();
         }
 
         private async void BtnNewLoan_Click(object sender, EventArgs e)

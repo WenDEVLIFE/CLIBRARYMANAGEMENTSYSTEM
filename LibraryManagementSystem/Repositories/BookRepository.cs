@@ -37,12 +37,13 @@ namespace LibraryManagementSystem.Repositories
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
-            const string query = "INSERT INTO Books (Title, Author, ISBN, Category, AddedBy) VALUES (@title, @author, @isbn, @category, @addedBy)";
+            const string query = "INSERT INTO Books (Title, Author, ISBN, Category, IsAvailable, AddedBy) VALUES (@title, @author, @isbn, @category, @isAvailable, @addedBy)";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@title", book.Title);
             command.Parameters.AddWithValue("@author", book.Author);
             command.Parameters.AddWithValue("@isbn", book.ISBN);
             command.Parameters.AddWithValue("@category", book.Category);
+            command.Parameters.AddWithValue("@isAvailable", book.IsAvailable);
             command.Parameters.AddWithValue("@addedBy", book.AddedBy);
 
             return await command.ExecuteNonQueryAsync() > 0;
