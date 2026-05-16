@@ -5,11 +5,11 @@
 - `[x]` Database Connection Helper
     - `[x]` Implement `DatabaseConfig` for connection strings
     - `[x]` Create `MySqlContext` / `DatabaseHelper` class
-- `[ ]` Base Repository / Service Pattern
-    - `[ ]` Create `UserRepository` for auth and user management
-    - `[ ]` Create `BookRepository` for inventory management
-    - `[ ]` Create `LoanRepository` for borrowing records
-    - `[ ]` Create `NotificationRepository` for system alerts
+- `[x]` Base Repository / Service Pattern
+    - `[x]` Create `UserRepository` for auth and user management
+    - `[x]` Create `BookRepository` for inventory management
+    - `[x]` Create `LoanRepository` for borrowing records
+    - `[x]` Create `NotificationRepository` for system alerts
 
 ## 2. Authentication Module
 - `[x]` Login Form UI (LoginForm.cs)
