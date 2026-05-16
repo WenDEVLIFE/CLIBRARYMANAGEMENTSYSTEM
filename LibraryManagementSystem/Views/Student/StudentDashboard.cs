@@ -184,11 +184,47 @@ namespace LibraryManagementSystem.Views.Students
             noteForm.ShowDialog();
         }
 
-        private void LoadOverview()
+        private async void LoadOverview()
         {
             lblHeaderTitle.Text = "Student Overview";
             pnlMainContent.Controls.Clear();
-            pnlMainContent.Controls.Add(new Label { Text = "Your active borrowings and recent alerts will be summarized here.", AutoSize = true, Font = new Font("Segoe UI", 12) });
+
+            if (_currentStudent == null) return;
+
+            // Run notification service for this student
+            var notifyService = new NotificationService();
+            await notifyService.ProcessDueNotificationsAsync();
+            RefreshNotificationCount();
+
+            Label lblStatus = new Label { 
+                Text = $"Welcome, {_currentStudent.FirstName}! Here is your current borrowing status:", 
+                Font = new Font("Segoe UI", 12, FontStyle.Bold), 
+                Dock = DockStyle.Top, 
+                Height = 40 
+            };
+            pnlMainContent.Controls.Add(lblStatus);
+
+            DataGridView dgv = new DataGridView { 
+                Dock = DockStyle.Fill, 
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                RowHeadersVisible = false,
+                AllowUserToAddRows = false,
+                ReadOnly = true
+            };
+
+            var allLoans = await _loanRepository.GetAllLoansAsync();
+            var activeLoans = allLoans.Where(l => l.StudentId == _currentStudent.StudentId && l.ReturnDate == null).ToList();
+            dgv.DataSource = activeLoans;
+
+            if (dgv.Columns["LoanId"] != null) dgv.Columns["LoanId"].Visible = false;
+            if (dgv.Columns["StudentId"] != null) dgv.Columns["StudentId"].Visible = false;
+            if (dgv.Columns["BookId"] != null) dgv.Columns["BookId"].Visible = false;
+            if (dgv.Columns["LibrarianId"] != null) dgv.Columns["LibrarianId"].Visible = false;
+            if (dgv.Columns["StudentName"] != null) dgv.Columns["StudentName"].Visible = false; // It's them
+
+            pnlMainContent.Controls.Add(dgv);
         }
 
         private async void LoadLoans()

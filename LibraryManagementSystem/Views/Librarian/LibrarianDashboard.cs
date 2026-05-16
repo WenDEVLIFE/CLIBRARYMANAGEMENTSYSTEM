@@ -118,11 +118,56 @@ namespace LibraryManagementSystem.Views.Librarian
             pnlSidebar.Controls.Add(btn);
         }
 
-        private void LoadActivityFeed()
+        private async void LoadActivityFeed()
         {
             lblHeaderTitle.Text = "Librarian Activity Feed";
             pnlMainContent.Controls.Clear();
-            pnlMainContent.Controls.Add(new Label { Text = "Recent circulation activity will appear here.", AutoSize = true, Font = new Font("Segoe UI", 12) });
+
+            var loanRepo = new LoanRepository();
+            var bookRepo = new BookRepository();
+
+            int activeLoansCount = (await loanRepo.GetActiveLoansAsync()).Count;
+            int overdueCount = (await loanRepo.GetOverdueLoansAsync()).Count;
+            int totalBooks = await bookRepo.GetBookCountAsync();
+
+            FlowLayoutPanel flow = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 150 };
+            flow.Controls.Add(CreateStatCard("Total Books", totalBooks.ToString(), Color.FromArgb(59, 130, 246)));
+            flow.Controls.Add(CreateStatCard("Active Loans", activeLoansCount.ToString(), Color.FromArgb(16, 185, 129)));
+            flow.Controls.Add(CreateStatCard("Overdue Books", overdueCount.ToString(), Color.FromArgb(239, 68, 68)));
+            pnlMainContent.Controls.Add(flow);
+
+            Label lblOverdue = new Label { Text = "Urgent: Overdue Loans", Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 30, Margin = new Padding(0, 20, 0, 10) };
+            pnlMainContent.Controls.Add(lblOverdue);
+
+            DataGridView dgv = new DataGridView { 
+                Dock = DockStyle.Fill, 
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                RowHeadersVisible = false,
+                AllowUserToAddRows = false,
+                ReadOnly = true
+            };
+            dgv.DataSource = await loanRepo.GetOverdueLoansAsync();
+            
+            if (dgv.Columns["LoanId"] != null) dgv.Columns["LoanId"].Visible = false;
+            if (dgv.Columns["BookId"] != null) dgv.Columns["BookId"].Visible = false;
+            if (dgv.Columns["LibrarianId"] != null) dgv.Columns["LibrarianId"].Visible = false;
+
+            pnlMainContent.Controls.Add(dgv);
+        }
+
+        private Panel CreateStatCard(string title, string value, Color color)
+        {
+            Panel card = new Panel { Width = 250, Height = 100, BackColor = Color.White, Margin = new Padding(0, 0, 20, 0) };
+            card.Paint += (s, e) => { ControlPaint.DrawBorder(e.Graphics, card.ClientRectangle, Color.FromArgb(229, 231, 235), ButtonBorderStyle.Solid); };
+            Panel stripe = new Panel { Dock = DockStyle.Left, Width = 5, BackColor = color };
+            card.Controls.Add(stripe);
+            Label lblTitle = new Label { Text = title, Font = new Font("Segoe UI", 10), ForeColor = Color.Gray, Location = new Point(20, 20), AutoSize = true };
+            Label lblValue = new Label { Text = value, Font = new Font("Segoe UI", 20, FontStyle.Bold), Location = new Point(20, 45), AutoSize = true };
+            card.Controls.Add(lblTitle);
+            card.Controls.Add(lblValue);
+            return card;
         }
 
         private void LoadCirculation()

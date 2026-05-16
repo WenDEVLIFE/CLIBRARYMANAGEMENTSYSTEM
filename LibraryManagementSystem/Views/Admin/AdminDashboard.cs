@@ -16,12 +16,14 @@ namespace LibraryManagementSystem.Views.Admin
         private UserRepository _userRepository;
         private BookRepository _bookRepository;
         private StudentRepository _studentRepository;
+        private LoanRepository _loanRepository;
 
         public AdminDashboard()
         {
             _userRepository = new UserRepository();
             _bookRepository = new BookRepository();
             _studentRepository = new StudentRepository();
+            _loanRepository = new LoanRepository();
             InitializeComponent();
             LoadOverview();
         }
@@ -131,6 +133,10 @@ namespace LibraryManagementSystem.Views.Admin
             lblHeaderTitle.Text = "Dashboard Overview";
             pnlMainContent.Controls.Clear();
 
+            // Run notification service
+            var notifyService = new NotificationService();
+            await notifyService.ProcessDueNotificationsAsync();
+
             int librarianCount = await _userRepository.GetUserCountByRoleAsync(UserRole.Librarian);
             int studentCount = await _studentRepository.GetStudentCountAsync();
             int bookCount = await _bookRepository.GetBookCountAsync();
@@ -139,8 +145,30 @@ namespace LibraryManagementSystem.Views.Admin
             flow.Controls.Add(CreateStatCard("Total Books", bookCount.ToString(), Color.FromArgb(59, 130, 246)));
             flow.Controls.Add(CreateStatCard("Librarians", librarianCount.ToString(), Color.FromArgb(16, 185, 129)));
             flow.Controls.Add(CreateStatCard("Students", studentCount.ToString(), Color.FromArgb(245, 158, 11)));
-
             pnlMainContent.Controls.Add(flow);
+
+            // Add Recent Alerts / Overdue Section
+            Label lblAlerts = new Label { Text = "Pending Returns / Overdue", Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 30, Margin = new Padding(0, 20, 0, 10) };
+            pnlMainContent.Controls.Add(lblAlerts);
+
+            DataGridView dgvAlerts = new DataGridView { 
+                Dock = DockStyle.Fill, 
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                RowHeadersVisible = false,
+                AllowUserToAddRows = false,
+                ReadOnly = true
+            };
+            
+            var overdue = await _loanRepository.GetOverdueLoansAsync();
+            dgvAlerts.DataSource = overdue;
+            
+            if (dgvAlerts.Columns["LoanId"] != null) dgvAlerts.Columns["LoanId"].Visible = false;
+            if (dgvAlerts.Columns["BookId"] != null) dgvAlerts.Columns["BookId"].Visible = false;
+            if (dgvAlerts.Columns["LibrarianId"] != null) dgvAlerts.Columns["LibrarianId"].Visible = false;
+
+            pnlMainContent.Controls.Add(dgvAlerts);
         }
 
         private Panel CreateStatCard(string title, string value, Color color)

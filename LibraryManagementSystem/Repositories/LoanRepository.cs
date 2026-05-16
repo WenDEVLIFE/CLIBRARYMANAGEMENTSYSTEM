@@ -136,5 +136,76 @@ namespace LibraryManagementSystem.Repositories
             }
             return loans;
         }
+        public async Task<List<Loan>> GetUpcomingDueLoansAsync(int daysAhead)
+        {
+            var loans = new List<Loan>();
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = @"
+                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
+                FROM Loans l 
+                JOIN Students s ON l.StudentId = s.StudentId 
+                JOIN Books b ON l.BookId = b.BookId 
+                WHERE l.ReturnDate IS NULL 
+                AND l.DueDate BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL @days DAY)";
+            
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@days", daysAhead);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                loans.Add(new Loan
+                {
+                    LoanId = reader.GetInt32("LoanId"),
+                    StudentId = reader.GetString("StudentId"),
+                    BookId = reader.GetInt32("BookId"),
+                    LibrarianId = reader.GetInt32("LibrarianId"),
+                    BorrowDate = reader.GetDateTime("BorrowDate"),
+                    DueDate = reader.GetDateTime("DueDate"),
+                    ReturnDate = null,
+                    StudentName = reader.GetString("StudentName"),
+                    StudentSection = reader.GetString("StudentSection"),
+                    BookTitle = reader.GetString("BookTitle")
+                });
+            }
+            return loans;
+        }
+
+        public async Task<List<Loan>> GetOverdueLoansAsync()
+        {
+            var loans = new List<Loan>();
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = @"
+                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
+                FROM Loans l 
+                JOIN Students s ON l.StudentId = s.StudentId 
+                JOIN Books b ON l.BookId = b.BookId 
+                WHERE l.ReturnDate IS NULL AND l.DueDate < CURRENT_DATE";
+            
+            using var command = new MySqlCommand(query, connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                loans.Add(new Loan
+                {
+                    LoanId = reader.GetInt32("LoanId"),
+                    StudentId = reader.GetString("StudentId"),
+                    BookId = reader.GetInt32("BookId"),
+                    LibrarianId = reader.GetInt32("LibrarianId"),
+                    BorrowDate = reader.GetDateTime("BorrowDate"),
+                    DueDate = reader.GetDateTime("DueDate"),
+                    ReturnDate = null,
+                    StudentName = reader.GetString("StudentName"),
+                    StudentSection = reader.GetString("StudentSection"),
+                    BookTitle = reader.GetString("BookTitle")
+                });
+            }
+            return loans;
+        }
     }
 }
