@@ -59,6 +59,14 @@ namespace LibraryManagementSystem.Views.Librarian
         private async void LoadBooks()
         {
             dgvBooks.DataSource = await _bookRepository.GetAllBooksAsync();
+            
+            // Hide numeric IDs for better UI
+            if (dgvBooks.Columns["AddedBy"] != null) dgvBooks.Columns["AddedBy"].Visible = false;
+            if (dgvBooks.Columns["BookId"] != null) dgvBooks.Columns["BookId"].Visible = false;
+            
+            // Set friendly headers
+            if (dgvBooks.Columns["AddedByUsername"] != null) dgvBooks.Columns["AddedByUsername"].HeaderText = "Added By";
+            if (dgvBooks.Columns["IsAvailable"] != null) dgvBooks.Columns["IsAvailable"].HeaderText = "Available";
         }
     }
 }

@@ -72,12 +72,13 @@ namespace LibraryManagementSystem.Repositories
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
-            const string query = "UPDATE Books SET Title = @title, Author = @author, ISBN = @isbn, Category = @category WHERE BookId = @bookId";
+            const string query = "UPDATE Books SET Title = @title, Author = @author, ISBN = @isbn, Category = @category, IsAvailable = @isAvailable WHERE BookId = @bookId";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@title", book.Title);
             command.Parameters.AddWithValue("@author", book.Author);
             command.Parameters.AddWithValue("@isbn", book.ISBN);
             command.Parameters.AddWithValue("@category", book.Category);
+            command.Parameters.AddWithValue("@isAvailable", book.IsAvailable);
             command.Parameters.AddWithValue("@bookId", book.BookId);
 
             return await command.ExecuteNonQueryAsync() > 0;
