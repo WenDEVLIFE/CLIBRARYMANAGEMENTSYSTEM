@@ -116,6 +116,32 @@ namespace LibraryManagementSystem.Repositories
             }
         }
 
+        public async Task<Student?> GetStudentByUserIdAsync(int userId)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = "SELECT * FROM Students WHERE UserId = @userId";
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", userId);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Student
+                {
+                    StudentId = reader.GetString("StudentId"),
+                    UserId = reader.GetInt32("UserId"),
+                    FirstName = reader.GetString("FirstName"),
+                    LastName = reader.GetString("LastName"),
+                    Section = reader.GetString("Section"),
+                    IsActive = reader.GetBoolean("IsActive"),
+                    CreatedAt = reader.GetDateTime("CreatedAt")
+                };
+            }
+            return null;
+        }
+
         public async Task<bool> DeleteStudentAsync(string studentId, int userId)
         {
             using var connection = DatabaseHelper.GetConnection();

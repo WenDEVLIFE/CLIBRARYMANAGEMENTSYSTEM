@@ -12,6 +12,7 @@ namespace LibraryManagementSystem.Models
 
         // Navigation properties (optional for now, but helpful)
         public string? StudentName { get; set; }
+        public string? StudentSection { get; set; }
         public string? BookTitle { get; set; }
     }
 }

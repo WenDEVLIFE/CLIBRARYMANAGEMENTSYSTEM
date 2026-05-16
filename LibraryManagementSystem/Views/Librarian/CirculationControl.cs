@@ -99,6 +99,14 @@ namespace LibraryManagementSystem.Views.Librarian
                 dgvLoans.DataSource = await _loanRepository.GetAllLoansAsync();
             else
                 dgvLoans.DataSource = await _loanRepository.GetActiveLoansAsync();
+
+            // Configure Columns
+            if (dgvLoans.Columns["LoanId"] != null) dgvLoans.Columns["LoanId"].Visible = false;
+            if (dgvLoans.Columns["BookId"] != null) dgvLoans.Columns["BookId"].Visible = false;
+            if (dgvLoans.Columns["LibrarianId"] != null) dgvLoans.Columns["LibrarianId"].Visible = false;
+            if (dgvLoans.Columns["StudentName"] != null) dgvLoans.Columns["StudentName"].DisplayIndex = 1;
+            if (dgvLoans.Columns["StudentSection"] != null) dgvLoans.Columns["StudentSection"].DisplayIndex = 2;
+            if (dgvLoans.Columns["StudentSection"] != null) dgvLoans.Columns["StudentSection"].HeaderText = "Section";
         }
 
         private async void BtnNewLoan_Click(object sender, EventArgs e)

@@ -74,7 +74,7 @@ namespace LibraryManagementSystem.Repositories
             await connection.OpenAsync();
 
             const string query = @"
-                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, b.Title as BookTitle 
+                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
                 FROM Loans l 
                 JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
@@ -95,6 +95,7 @@ namespace LibraryManagementSystem.Repositories
                     DueDate = reader.GetDateTime("DueDate"),
                     ReturnDate = reader.IsDBNull(reader.GetOrdinal("ReturnDate")) ? null : reader.GetDateTime("ReturnDate"),
                     StudentName = reader.GetString("StudentName"),
+                    StudentSection = reader.GetString("StudentSection"),
                     BookTitle = reader.GetString("BookTitle")
                 });
             }
@@ -108,7 +109,7 @@ namespace LibraryManagementSystem.Repositories
             await connection.OpenAsync();
 
             const string query = @"
-                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, b.Title as BookTitle 
+                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
                 FROM Loans l 
                 JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
@@ -129,6 +130,7 @@ namespace LibraryManagementSystem.Repositories
                     DueDate = reader.GetDateTime("DueDate"),
                     ReturnDate = reader.IsDBNull(reader.GetOrdinal("ReturnDate")) ? null : reader.GetDateTime("ReturnDate"),
                     StudentName = reader.GetString("StudentName"),
+                    StudentSection = reader.GetString("StudentSection"),
                     BookTitle = reader.GetString("BookTitle")
                 });
             }

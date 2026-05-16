@@ -18,12 +18,24 @@ namespace LibraryManagementSystem.Views.Students
         private Button btnNotifications;
         private NotificationRepository _notificationRepository;
         private LoanRepository _loanRepository;
+        private StudentRepository _studentRepository;
+        private LibraryManagementSystem.Models.Student? _currentStudent;
 
         public StudentDashboard()
         {
             _notificationRepository = new NotificationRepository();
             _loanRepository = new LoanRepository();
+            _studentRepository = new StudentRepository();
             InitializeComponent();
+            InitializeDashboard();
+        }
+
+        private async void InitializeDashboard()
+        {
+            if (Session.CurrentUser != null)
+            {
+                _currentStudent = await _studentRepository.GetStudentByUserIdAsync(Session.CurrentUser.UserId);
+            }
             LoadOverview();
             RefreshNotificationCount();
         }
@@ -140,10 +152,9 @@ namespace LibraryManagementSystem.Views.Students
 
         private async void RefreshNotificationCount()
         {
-            if (Session.CurrentUser == null) return;
-            // Note: Currently students don't log in via Users table. 
-            // This logic may need update if StudentId is used for session.
-            var notes = await _notificationRepository.GetByStudentIdAsync(Session.CurrentUser.UserId.ToString());
+            if (_currentStudent == null) return;
+            
+            var notes = await _notificationRepository.GetByStudentIdAsync(_currentStudent.StudentId);
             int unread = notes.Count(n => !n.IsRead);
             btnNotifications.Text = $"🔔 ({unread})";
             btnNotifications.ForeColor = unread > 0 ? Color.Red : Color.Black;
@@ -151,8 +162,8 @@ namespace LibraryManagementSystem.Views.Students
 
         private async void ShowNotifications(object sender, EventArgs e)
         {
-            if (Session.CurrentUser == null) return;
-            var notes = await _notificationRepository.GetByStudentIdAsync(Session.CurrentUser.UserId.ToString());
+            if (_currentStudent == null) return;
+            var notes = await _notificationRepository.GetByStudentIdAsync(_currentStudent.StudentId);
             
             Form noteForm = new Form { Text = "Notifications", Size = new Size(300, 400), StartPosition = FormStartPosition.CenterParent };
             ListBox lb = new ListBox { Dock = DockStyle.Fill };
@@ -190,12 +201,23 @@ namespace LibraryManagementSystem.Views.Students
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                RowHeadersVisible = false
+                RowHeadersVisible = false,
+                AllowUserToAddRows = false,
+                ReadOnly = true
             };
-
+ 
             var allLoans = await _loanRepository.GetAllLoansAsync();
-            var studentLoans = allLoans.Where(l => l.StudentId == Session.CurrentUser?.UserId.ToString()).ToList();
+            var studentLoans = allLoans.Where(l => l.StudentId == _currentStudent?.StudentId).ToList();
             dgv.DataSource = studentLoans;
+
+            // Configure Columns
+            if (dgv.Columns["LoanId"] != null) dgv.Columns["LoanId"].Visible = false;
+            if (dgv.Columns["StudentId"] != null) dgv.Columns["StudentId"].Visible = false;
+            if (dgv.Columns["BookId"] != null) dgv.Columns["BookId"].Visible = false;
+            if (dgv.Columns["LibrarianId"] != null) dgv.Columns["LibrarianId"].Visible = false;
+            if (dgv.Columns["StudentName"] != null) dgv.Columns["StudentName"].HeaderText = "Name";
+            if (dgv.Columns["StudentSection"] != null) dgv.Columns["StudentSection"].HeaderText = "Section";
+            if (dgv.Columns["BookTitle"] != null) dgv.Columns["BookTitle"].HeaderText = "Book Title";
 
             pnlMainContent.Controls.Add(dgv);
         }
