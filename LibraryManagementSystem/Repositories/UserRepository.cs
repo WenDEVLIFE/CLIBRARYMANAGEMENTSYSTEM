@@ -11,22 +11,32 @@ namespace LibraryManagementSystem.Repositories
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
-            const string query = "SELECT * FROM Users WHERE Username = @username AND PasswordHash = @password";
+            const string query = "SELECT * FROM Users WHERE Username = @username";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@username", username);
-            command.Parameters.AddWithValue("@password", password); // Note: Should be hashed in production
 
             using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                return new User
+                string storedHash = reader.GetString("PasswordHash");
+                
+                // Verify password (in production, even the default admin should be hashed)
+                // For convenience during initial setup, we'll check plain text if it's not a BCrypt hash
+                bool isValid = storedHash.StartsWith("$2") 
+                    ? Utils.PasswordHasher.VerifyPassword(password, storedHash)
+                    : storedHash == password;
+
+                if (isValid)
                 {
-                    UserId = reader.GetInt32("UserId"),
-                    Username = reader.GetString("Username"),
-                    Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
-                    Role = Enum.Parse<UserRole>(reader.GetString("Role")),
-                    CreatedAt = reader.GetDateTime("CreatedAt")
-                };
+                    return new User
+                    {
+                        UserId = reader.GetInt32("UserId"),
+                        Username = reader.GetString("Username"),
+                        Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
+                        Role = Enum.Parse<UserRole>(reader.GetString("Role")),
+                        CreatedAt = reader.GetDateTime("CreatedAt")
+                    };
+                }
             }
 
             return null;

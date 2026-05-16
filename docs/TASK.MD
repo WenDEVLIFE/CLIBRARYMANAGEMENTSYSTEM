@@ -13,10 +13,10 @@
 
 ## 2. Authentication Module
 - `[x]` Login Form UI (LoginForm.cs)
-- `[ ]` Login Backend Logic
-    - `[ ]` Password Hashing/Verification function
-    - `[ ]` Database query for user authentication
-    - `[ ]` Session/Role handling (determining which dashboard to open)
+- `[x]` Login Backend Logic
+    - `[x]` Password Hashing/Verification function
+    - `[x]` Database query for user authentication
+    - `[x]` Session/Role handling (determining which dashboard to open)
 
 ## 3. Admin Module
 - `[ ]` Admin Dashboard UI
