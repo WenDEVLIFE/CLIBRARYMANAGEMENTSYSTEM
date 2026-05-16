@@ -67,5 +67,38 @@ namespace LibraryManagementSystem.Repositories
                 return false;
             }
         }
+        public async Task<List<Loan>> GetActiveLoansAsync()
+        {
+            var loans = new List<Loan>();
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = @"
+                SELECT l.*, u.Username as StudentName, b.Title as BookTitle 
+                FROM Loans l 
+                JOIN Users u ON l.StudentId = u.UserId 
+                JOIN Books b ON l.BookId = b.BookId 
+                WHERE l.ReturnDate IS NULL";
+            
+            using var command = new MySqlCommand(query, connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                loans.Add(new Loan
+                {
+                    LoanId = reader.GetInt32("LoanId"),
+                    StudentId = reader.GetInt32("StudentId"),
+                    BookId = reader.GetInt32("BookId"),
+                    LibrarianId = reader.GetInt32("LibrarianId"),
+                    BorrowDate = reader.GetDateTime("BorrowDate"),
+                    DueDate = reader.GetDateTime("DueDate"),
+                    ReturnDate = reader.IsDBNull(reader.GetOrdinal("ReturnDate")) ? null : reader.GetDateTime("ReturnDate"),
+                    StudentName = reader.GetString("StudentName"),
+                    BookTitle = reader.GetString("BookTitle")
+                });
+            }
+            return loans;
+        }
     }
 }

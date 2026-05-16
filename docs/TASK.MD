@@ -30,15 +30,15 @@
     - `[x]` **DB**: `AddBook`, `EditBook`, `DeleteBook` functions
 
 ## 4. Librarian Module
-- `[ ]` Librarian Dashboard UI
-    - `[ ]` Main activity feed
-- `[ ]` Book Inventory View
-    - `[ ]` **UI**: Searchable book grid
-    - `[ ]` **DB**: `GetAllBooks`, `SearchBooks` functions
-- `[ ]` Loan Operations
-    - `[ ]` **UI**: Borrowing Record Form (Select Student, Select Book, Set Due Date)
-    - `[ ]` **UI**: Return Book Interface
-    - `[ ]` **DB**: `RecordLoan`, `MarkAsReturned`, `UpdateBookAvailability` functions
+- `[x]` Librarian Dashboard UI
+    - `[x]` Main activity feed
+- `[x]` Book Inventory View
+    - `[x]` **UI**: Searchable book grid
+    - `[x]` **DB**: `GetAllBooks`, `SearchBooks` functions
+- `[x]` Loan Operations
+    - `[x]` **UI**: Borrowing Record Form (Select Student, Select Book, Set Due Date)
+    - `[x]` **UI**: Return Book Interface
+    - `[x]` **DB**: `RecordLoan`, `MarkAsReturned`, `UpdateBookAvailability` functions
 
 ## 5. Student Module
 - `[ ]` Student Dashboard UI

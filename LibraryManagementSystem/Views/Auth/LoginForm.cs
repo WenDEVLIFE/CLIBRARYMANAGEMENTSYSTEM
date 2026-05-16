@@ -5,6 +5,7 @@ using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Views.Admin;
 using LibraryManagementSystem.Views.Librarian;
 using LibraryManagementSystem.Views.Student;
+using LibraryManagementSystem.Utils;
 
 namespace LibraryManagementSystem.Views.Auth
 {
@@ -38,6 +39,7 @@ namespace LibraryManagementSystem.Views.Auth
 
                 if (user != null)
                 {
+                    Session.CurrentUser = user;
                     this.Hide();
                     Form dashboard = user.Role switch
                     {
