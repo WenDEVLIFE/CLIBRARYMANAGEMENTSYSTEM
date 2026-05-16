@@ -28,14 +28,14 @@ namespace LibraryManagementSystem.Views.Admin
             this.Text = "Scholar Central - Admin Dashboard";
             this.Size = new Size(1100, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(245, 247, 251);
+            this.BackColor = Theme.Background;
 
             // Sidebar
             pnlSidebar = new Panel
             {
                 Width = 220,
                 Dock = DockStyle.Left,
-                BackColor = Color.FromArgb(31, 41, 55)
+                BackColor = Theme.Secondary
             };
 
             Label lblLogo = new Label
@@ -58,7 +58,7 @@ namespace LibraryManagementSystem.Views.Admin
                 Text = "Logout",
                 FlatStyle = FlatStyle.Flat,
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Font = Theme.ButtonFont,
                 Height = 45,
                 Dock = DockStyle.Bottom,
                 Cursor = Cursors.Hand

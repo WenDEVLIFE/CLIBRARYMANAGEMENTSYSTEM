@@ -33,14 +33,14 @@ namespace LibraryManagementSystem.Views.Student
             this.Text = "Scholar Central - Student Dashboard";
             this.Size = new Size(1100, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(245, 247, 251);
+            this.BackColor = Theme.Background;
 
             // Sidebar
             pnlSidebar = new Panel
             {
                 Width = 220,
                 Dock = DockStyle.Left,
-                BackColor = Color.FromArgb(15, 23, 42)
+                BackColor = Theme.Secondary
             };
 
             Label lblLogo = new Label

@@ -69,9 +69,15 @@ namespace LibraryManagementSystem.Views.Admin
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtTitle.Text))
+            if (!ValidationHelper.IsNotEmpty(txtTitle.Text))
             {
                 MessageBox.Show("Title is required.");
+                return;
+            }
+
+            if (!ValidationHelper.IsNotEmpty(txtAuthor.Text))
+            {
+                MessageBox.Show("Author is required.");
                 return;
             }
 

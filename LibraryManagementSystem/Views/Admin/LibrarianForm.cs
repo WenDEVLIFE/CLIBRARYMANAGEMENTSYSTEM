@@ -67,13 +67,19 @@ namespace LibraryManagementSystem.Views.Admin
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtUsername.Text))
+            if (!ValidationHelper.IsNotEmpty(txtUsername.Text))
             {
                 MessageBox.Show("Username is required.");
                 return;
             }
 
-            if (!_isEdit && string.IsNullOrWhiteSpace(txtPassword.Text))
+            if (ValidationHelper.IsNotEmpty(txtEmail.Text) && !ValidationHelper.IsValidEmail(txtEmail.Text))
+            {
+                MessageBox.Show("Please enter a valid email address.");
+                return;
+            }
+
+            if (!_isEdit && !ValidationHelper.IsNotEmpty(txtPassword.Text))
             {
                 MessageBox.Show("Password is required for new accounts.");
                 return;

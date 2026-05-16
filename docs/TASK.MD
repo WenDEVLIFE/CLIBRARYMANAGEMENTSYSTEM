@@ -50,11 +50,11 @@
     - `[x]` **UI**: Grid showing past and current loans
 
 ## 6. UI/UX & Finalization
-- `[ ]` Theme Implementation
-    - `[ ]` Apply custom colors and fonts to all WinForms
-    - `[ ]` Implement hover effects and button styling
-- `[ ]` Validation & Security
-    - `[ ]` Form input validation (Regex for emails, required fields)
-    - `[ ]` Error handling for database failures
-- `[ ]` Final Testing
-    - `[ ]` End-to-end testing for all roles
+- `[x]` Theme Implementation
+    - `[x]` Apply custom colors and fonts to all WinForms
+    - `[x]` Implement hover effects and button styling
+- `[x]` Validation & Security
+    - `[x]` Form input validation (Regex for emails, required fields)
+    - `[x]` Error handling for database failures
+- `[x]` Final Testing
+    - `[x]` End-to-end testing for all roles
