@@ -9,5 +9,6 @@ namespace LibraryManagementSystem.Models
         public string? Category { get; set; }
         public bool IsAvailable { get; set; } = true;
         public int? AddedBy { get; set; }
+        public string? AddedByUsername { get; set; }
     }
 }

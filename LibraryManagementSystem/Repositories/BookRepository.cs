@@ -12,7 +12,11 @@ namespace LibraryManagementSystem.Repositories
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
-            const string query = "SELECT * FROM Books";
+            const string query = @"
+                SELECT b.*, u.Username as AddedByUsername 
+                FROM Books b 
+                LEFT JOIN Users u ON b.AddedBy = u.UserId";
+            
             using var command = new MySqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
 
@@ -26,7 +30,8 @@ namespace LibraryManagementSystem.Repositories
                     ISBN = reader.IsDBNull(reader.GetOrdinal("ISBN")) ? null : reader.GetString("ISBN"),
                     Category = reader.IsDBNull(reader.GetOrdinal("Category")) ? null : reader.GetString("Category"),
                     IsAvailable = reader.GetBoolean("IsAvailable"),
-                    AddedBy = reader.IsDBNull(reader.GetOrdinal("AddedBy")) ? (int?)null : reader.GetInt32("AddedBy")
+                    AddedBy = reader.IsDBNull(reader.GetOrdinal("AddedBy")) ? (int?)null : reader.GetInt32("AddedBy"),
+                    AddedByUsername = reader.IsDBNull(reader.GetOrdinal("AddedByUsername")) ? "System" : reader.GetString("AddedByUsername")
                 });
             }
             return books;
@@ -96,9 +101,14 @@ namespace LibraryManagementSystem.Repositories
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
-            const string query = "SELECT * FROM Books WHERE Title LIKE @search OR Author LIKE @search OR ISBN LIKE @search";
+            const string query = @"
+                SELECT b.*, u.Username as AddedByUsername 
+                FROM Books b 
+                LEFT JOIN Users u ON b.AddedBy = u.UserId
+                WHERE b.Title LIKE @term OR b.Author LIKE @term OR b.ISBN LIKE @term";
+            
             using var command = new MySqlCommand(query, connection);
-            command.Parameters.AddWithValue("@search", $"%{searchTerm}%");
+            command.Parameters.AddWithValue("@term", $"%{searchTerm}%");
 
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -111,7 +121,8 @@ namespace LibraryManagementSystem.Repositories
                     ISBN = reader.IsDBNull(reader.GetOrdinal("ISBN")) ? null : reader.GetString("ISBN"),
                     Category = reader.IsDBNull(reader.GetOrdinal("Category")) ? null : reader.GetString("Category"),
                     IsAvailable = reader.GetBoolean("IsAvailable"),
-                    AddedBy = reader.IsDBNull(reader.GetOrdinal("AddedBy")) ? (int?)null : reader.GetInt32("AddedBy")
+                    AddedBy = reader.IsDBNull(reader.GetOrdinal("AddedBy")) ? (int?)null : reader.GetInt32("AddedBy"),
+                    AddedByUsername = reader.IsDBNull(reader.GetOrdinal("AddedByUsername")) ? "System" : reader.GetString("AddedByUsername")
                 });
             }
             return books;

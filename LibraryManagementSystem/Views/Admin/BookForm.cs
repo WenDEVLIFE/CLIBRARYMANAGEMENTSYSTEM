@@ -12,6 +12,7 @@ namespace LibraryManagementSystem.Views.Admin
         private TextBox txtAuthor;
         private TextBox txtISBN;
         private TextBox txtCategory;
+        private CheckBox chkIsAvailable;
         private Button btnSave;
         public Book? Book { get; private set; }
         private bool _isEdit;
@@ -27,6 +28,11 @@ namespace LibraryManagementSystem.Views.Admin
                 txtAuthor.Text = book.Author;
                 txtISBN.Text = book.ISBN;
                 txtCategory.Text = book.Category;
+                chkIsAvailable.Checked = book.IsAvailable;
+            }
+            else
+            {
+                chkIsAvailable.Checked = true;
             }
         }
 
@@ -52,9 +58,17 @@ namespace LibraryManagementSystem.Views.Admin
             Label lblCategory = new Label { Text = "Category", Location = new Point(left, top + 210), AutoSize = true };
             txtCategory = new TextBox { Location = new Point(left, top + 235), Width = width, Font = new Font("Segoe UI", 10) };
 
+            chkIsAvailable = new CheckBox { 
+                Text = "Is Available for Borrowing", 
+                Location = new Point(left, top + 275), 
+                AutoSize = true, 
+                Font = new Font("Segoe UI", 10),
+                Checked = true
+            };
+
             btnSave = new Button { 
                 Text = "Save Book", 
-                Location = new Point(left, top + 300), 
+                Location = new Point(left, top + 310), 
                 Width = width, 
                 Height = 40, 
                 BackColor = Color.FromArgb(59, 130, 246), 
@@ -65,7 +79,7 @@ namespace LibraryManagementSystem.Views.Admin
             btnSave.FlatAppearance.BorderSize = 0;
             btnSave.Click += BtnSave_Click;
 
-            this.Controls.AddRange(new Control[] { lblTitle, txtTitle, lblAuthor, txtAuthor, lblISBN, txtISBN, lblCategory, txtCategory, btnSave });
+            this.Controls.AddRange(new Control[] { lblTitle, txtTitle, lblAuthor, txtAuthor, lblISBN, txtISBN, lblCategory, txtCategory, chkIsAvailable, btnSave });
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
@@ -88,6 +102,7 @@ namespace LibraryManagementSystem.Views.Admin
                 Book!.Author = txtAuthor.Text.Trim();
                 Book!.ISBN = txtISBN.Text.Trim();
                 Book!.Category = txtCategory.Text.Trim();
+                Book!.IsAvailable = chkIsAvailable.Checked;
             }
             else
             {
@@ -97,7 +112,7 @@ namespace LibraryManagementSystem.Views.Admin
                     Author = txtAuthor.Text.Trim(),
                     ISBN = txtISBN.Text.Trim(),
                     Category = txtCategory.Text.Trim(),
-                    IsAvailable = true
+                    IsAvailable = chkIsAvailable.Checked
                 };
             }
 
