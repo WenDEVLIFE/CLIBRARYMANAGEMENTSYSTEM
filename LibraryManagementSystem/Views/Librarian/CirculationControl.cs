@@ -10,18 +10,18 @@ namespace LibraryManagementSystem.Views.Librarian
 {
     public class CirculationControl : UserControl
     {
-        private DataGridView dgvLoans;
-        private Button btnNewLoan;
+        private DataGridView dgvBorrows;
+        private Button btnNewBorrow;
         private Button btnReturn;
         private Button btnToggleHistory;
         private bool _showHistory = false;
-        private LoanRepository _loanRepository;
+        private BorrowRepository _BorrowRepository;
 
         public CirculationControl()
         {
-            _loanRepository = new LoanRepository();
+            _BorrowRepository = new BorrowRepository();
             InitializeComponent();
-            LoadLoans();
+            LoadBorrows();
         }
 
         private void InitializeComponent()
@@ -31,8 +31,8 @@ namespace LibraryManagementSystem.Views.Librarian
 
             Panel pnlToolbar = new Panel { Dock = DockStyle.Top, Height = 60, Padding = new Padding(10) };
             
-            btnNewLoan = new Button { 
-                Text = "+ New Loan", 
+            btnNewBorrow = new Button { 
+                Text = "+ New Borrow", 
                 Width = 120, 
                 Height = 35, 
                 BackColor = Color.FromArgb(59, 130, 246), 
@@ -41,8 +41,8 @@ namespace LibraryManagementSystem.Views.Librarian
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Location = new Point(10, 12)
             };
-            btnNewLoan.FlatAppearance.BorderSize = 0;
-            btnNewLoan.Click += BtnNewLoan_Click;
+            btnNewBorrow.FlatAppearance.BorderSize = 0;
+            btnNewBorrow.Click += BtnNewBorrow_Click;
 
             btnReturn = new Button { 
                 Text = "Mark as Returned", 
@@ -52,7 +52,7 @@ namespace LibraryManagementSystem.Views.Librarian
                 ForeColor = Color.White, 
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                Location = new Point(btnNewLoan.Right + 10, 12)
+                Location = new Point(btnNewBorrow.Right + 10, 12)
             };
             btnReturn.FlatAppearance.BorderSize = 0;
             btnReturn.Click += BtnReturn_Click;
@@ -71,14 +71,14 @@ namespace LibraryManagementSystem.Views.Librarian
             btnToggleHistory.Click += (s, e) => {
                 _showHistory = !_showHistory;
                 btnToggleHistory.Text = _showHistory ? "Show Active Only" : "Show All History";
-                LoadLoans();
+                LoadBorrows();
             };
 
-            pnlToolbar.Controls.Add(btnNewLoan);
+            pnlToolbar.Controls.Add(btnNewBorrow);
             pnlToolbar.Controls.Add(btnReturn);
             pnlToolbar.Controls.Add(btnToggleHistory);
 
-            dgvLoans = new DataGridView { 
+            dgvBorrows = new DataGridView { 
                 Dock = DockStyle.Fill, 
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
@@ -89,63 +89,64 @@ namespace LibraryManagementSystem.Views.Librarian
                 RowHeadersVisible = false
             };
 
-            this.Controls.Add(dgvLoans);
+            this.Controls.Add(dgvBorrows);
             this.Controls.Add(pnlToolbar);
         }
 
-        private async void LoadLoans()
+        private async void LoadBorrows()
         {
             if (_showHistory)
-                dgvLoans.DataSource = await _loanRepository.GetAllLoansAsync();
+                dgvBorrows.DataSource = await _BorrowRepository.GetAllBorrowsAsync();
             else
-                dgvLoans.DataSource = await _loanRepository.GetActiveLoansAsync();
+                dgvBorrows.DataSource = await _BorrowRepository.GetActiveBorrowsAsync();
 
             // Configure Columns
-            if (dgvLoans.Columns["LoanId"] != null) dgvLoans.Columns["LoanId"].Visible = false;
-            if (dgvLoans.Columns["BookId"] != null) dgvLoans.Columns["BookId"].Visible = false;
-            if (dgvLoans.Columns["LibrarianId"] != null) dgvLoans.Columns["LibrarianId"].Visible = false;
-            if (dgvLoans.Columns["StudentName"] != null) dgvLoans.Columns["StudentName"].DisplayIndex = 1;
-            if (dgvLoans.Columns["StudentSection"] != null) dgvLoans.Columns["StudentSection"].DisplayIndex = 2;
-            if (dgvLoans.Columns["StudentSection"] != null) dgvLoans.Columns["StudentSection"].HeaderText = "Section";
+            if (dgvBorrows.Columns["BorrowId"] != null) dgvBorrows.Columns["BorrowId"].Visible = false;
+            if (dgvBorrows.Columns["BookId"] != null) dgvBorrows.Columns["BookId"].Visible = false;
+            if (dgvBorrows.Columns["LibrarianId"] != null) dgvBorrows.Columns["LibrarianId"].Visible = false;
+            if (dgvBorrows.Columns["StudentName"] != null) dgvBorrows.Columns["StudentName"].DisplayIndex = 1;
+            if (dgvBorrows.Columns["StudentSection"] != null) dgvBorrows.Columns["StudentSection"].DisplayIndex = 2;
+            if (dgvBorrows.Columns["StudentSection"] != null) dgvBorrows.Columns["StudentSection"].HeaderText = "Section";
         }
 
-        private async void BtnNewLoan_Click(object sender, EventArgs e)
+        private async void BtnNewBorrow_Click(object sender, EventArgs e)
         {
-            var form = new LoanForm();
+            var form = new BorrowForm();
             if (form.ShowDialog() == DialogResult.OK)
             {
-                var loan = form.NewLoan!;
-                loan.LibrarianId = Session.CurrentUser?.UserId ?? 0;
+                var Borrow = form.NewBorrow!;
+                Borrow.LibrarianId = Session.CurrentUser?.UserId ?? 0;
                 
-                bool success = await _loanRepository.RecordLoanAsync(loan);
+                bool success = await _BorrowRepository.RecordBorrowAsync(Borrow);
                 if (success)
                 {
-                    MessageBox.Show("Loan recorded successfully.");
-                    LoadLoans();
+                    MessageBox.Show("Borrow recorded successfully.");
+                    LoadBorrows();
                 }
                 else
                 {
-                    MessageBox.Show("Failed to record loan.");
+                    MessageBox.Show("Failed to record Borrow.");
                 }
             }
         }
 
         private async void BtnReturn_Click(object sender, EventArgs e)
         {
-            if (dgvLoans.SelectedRows.Count > 0)
+            if (dgvBorrows.SelectedRows.Count > 0)
             {
-                var loan = (Loan)dgvLoans.SelectedRows[0].DataBoundItem;
-                bool success = await _loanRepository.MarkAsReturnedAsync(loan.LoanId, loan.BookId);
+                var Borrow = (Borrow)dgvBorrows.SelectedRows[0].DataBoundItem;
+                bool success = await _BorrowRepository.MarkAsReturnedAsync(Borrow.BorrowId, Borrow.BookId);
                 if (success)
                 {
                     MessageBox.Show("Book returned successfully.");
-                    LoadLoans();
+                    LoadBorrows();
                 }
             }
             else
             {
-                MessageBox.Show("Please select a loan to mark as returned.");
+                MessageBox.Show("Please select a Borrow to mark as returned.");
             }
         }
     }
 }
+

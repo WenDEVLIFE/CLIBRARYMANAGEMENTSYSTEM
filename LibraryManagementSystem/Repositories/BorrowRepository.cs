@@ -4,9 +4,9 @@ using LibraryManagementSystem.Models;
 
 namespace LibraryManagementSystem.Repositories
 {
-    public class LoanRepository
+    public class BorrowRepository
     {
-        public async Task<bool> RecordLoanAsync(Loan loan)
+        public async Task<bool> RecordBorrowAsync(Borrow borrow)
         {
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
@@ -14,20 +14,20 @@ namespace LibraryManagementSystem.Repositories
 
             try
             {
-                // 1. Insert Loan record
-                const string loanQuery = "INSERT INTO Loans (StudentId, BookId, LibrarianId, BorrowDate, DueDate) VALUES (@studentId, @bookId, @librarianId, @borrowDate, @dueDate)";
-                using var loanCommand = new MySqlCommand(loanQuery, connection, transaction);
-                loanCommand.Parameters.AddWithValue("@studentId", loan.StudentId);
-                loanCommand.Parameters.AddWithValue("@bookId", loan.BookId);
-                loanCommand.Parameters.AddWithValue("@librarianId", loan.LibrarianId);
-                loanCommand.Parameters.AddWithValue("@borrowDate", loan.BorrowDate);
-                loanCommand.Parameters.AddWithValue("@dueDate", loan.DueDate);
-                await loanCommand.ExecuteNonQueryAsync();
+                // 1. Insert Borrow record
+                const string borrowQuery = "INSERT INTO Borrows (StudentId, BookId, LibrarianId, BorrowDate, DueDate) VALUES (@studentId, @bookId, @librarianId, @borrowDate, @dueDate)";
+                using var borrowCommand = new MySqlCommand(borrowQuery, connection, transaction);
+                borrowCommand.Parameters.AddWithValue("@studentId", borrow.StudentId);
+                borrowCommand.Parameters.AddWithValue("@bookId", borrow.BookId);
+                borrowCommand.Parameters.AddWithValue("@librarianId", borrow.LibrarianId);
+                borrowCommand.Parameters.AddWithValue("@borrowDate", borrow.BorrowDate);
+                borrowCommand.Parameters.AddWithValue("@dueDate", borrow.DueDate);
+                await borrowCommand.ExecuteNonQueryAsync();
 
                 // 2. Update Book availability
                 const string bookQuery = "UPDATE Books SET IsAvailable = FALSE WHERE BookId = @bookId";
                 using var bookCommand = new MySqlCommand(bookQuery, connection, transaction);
-                bookCommand.Parameters.AddWithValue("@bookId", loan.BookId);
+                bookCommand.Parameters.AddWithValue("@bookId", borrow.BookId);
                 await bookCommand.ExecuteNonQueryAsync();
 
                 await transaction.CommitAsync();
@@ -40,7 +40,7 @@ namespace LibraryManagementSystem.Repositories
             }
         }
 
-        public async Task<bool> MarkAsReturnedAsync(int loanId, int bookId)
+        public async Task<bool> MarkAsReturnedAsync(int borrowId, int bookId)
         {
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
@@ -48,10 +48,10 @@ namespace LibraryManagementSystem.Repositories
 
             try
             {
-                const string loanQuery = "UPDATE Loans SET ReturnDate = CURRENT_TIMESTAMP WHERE LoanId = @loanId";
-                using var loanCommand = new MySqlCommand(loanQuery, connection, transaction);
-                loanCommand.Parameters.AddWithValue("@loanId", loanId);
-                await loanCommand.ExecuteNonQueryAsync();
+                const string borrowQuery = "UPDATE Borrows SET ReturnDate = CURRENT_TIMESTAMP WHERE borrowId = @borrowId";
+                using var borrowCommand = new MySqlCommand(borrowQuery, connection, transaction);
+                borrowCommand.Parameters.AddWithValue("@borrowId", borrowId);
+                await borrowCommand.ExecuteNonQueryAsync();
 
                 const string bookQuery = "UPDATE Books SET IsAvailable = TRUE WHERE BookId = @bookId";
                 using var bookCommand = new MySqlCommand(bookQuery, connection, transaction);
@@ -67,15 +67,15 @@ namespace LibraryManagementSystem.Repositories
                 return false;
             }
         }
-        public async Task<List<Loan>> GetActiveLoansAsync()
+        public async Task<List<Borrow>> GetActiveBorrowsAsync()
         {
-            var loans = new List<Loan>();
+            var borrows = new List<Borrow>();
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
             const string query = @"
                 SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
-                FROM Loans l 
+                FROM Borrows l 
                 JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
                 WHERE l.ReturnDate IS NULL";
@@ -85,9 +85,9 @@ namespace LibraryManagementSystem.Repositories
 
             while (await reader.ReadAsync())
             {
-                loans.Add(new Loan
+                borrows.Add(new Borrow
                 {
-                    LoanId = reader.GetInt32("LoanId"),
+                    BorrowId = reader.GetInt32("BorrowId"),
                     StudentId = reader.GetString("StudentId"),
                     BookId = reader.GetInt32("BookId"),
                     LibrarianId = reader.GetInt32("LibrarianId"),
@@ -99,18 +99,18 @@ namespace LibraryManagementSystem.Repositories
                     BookTitle = reader.GetString("BookTitle")
                 });
             }
-            return loans;
+            return borrows;
         }
 
-        public async Task<List<Loan>> GetAllLoansAsync()
+        public async Task<List<Borrow>> GetAllBorrowsAsync()
         {
-            var loans = new List<Loan>();
+            var borrows = new List<Borrow>();
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
             const string query = @"
                 SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
-                FROM Loans l 
+                FROM Borrows l 
                 JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
                 ORDER BY l.BorrowDate DESC";
@@ -120,9 +120,9 @@ namespace LibraryManagementSystem.Repositories
 
             while (await reader.ReadAsync())
             {
-                loans.Add(new Loan
+                borrows.Add(new Borrow
                 {
-                    LoanId = reader.GetInt32("LoanId"),
+                    BorrowId = reader.GetInt32("BorrowId"),
                     StudentId = reader.GetString("StudentId"),
                     BookId = reader.GetInt32("BookId"),
                     LibrarianId = reader.GetInt32("LibrarianId"),
@@ -134,17 +134,17 @@ namespace LibraryManagementSystem.Repositories
                     BookTitle = reader.GetString("BookTitle")
                 });
             }
-            return loans;
+            return borrows;
         }
-        public async Task<List<Loan>> GetUpcomingDueLoansAsync(int daysAhead)
+        public async Task<List<Borrow>> GetUpcomingDueBorrowsAsync(int daysAhead)
         {
-            var loans = new List<Loan>();
+            var borrows = new List<Borrow>();
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
             const string query = @"
                 SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
-                FROM Loans l 
+                FROM Borrows l 
                 JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
                 WHERE l.ReturnDate IS NULL 
@@ -156,9 +156,9 @@ namespace LibraryManagementSystem.Repositories
 
             while (await reader.ReadAsync())
             {
-                loans.Add(new Loan
+                borrows.Add(new Borrow
                 {
-                    LoanId = reader.GetInt32("LoanId"),
+                    BorrowId = reader.GetInt32("BorrowId"),
                     StudentId = reader.GetString("StudentId"),
                     BookId = reader.GetInt32("BookId"),
                     LibrarianId = reader.GetInt32("LibrarianId"),
@@ -170,18 +170,18 @@ namespace LibraryManagementSystem.Repositories
                     BookTitle = reader.GetString("BookTitle")
                 });
             }
-            return loans;
+            return borrows;
         }
 
-        public async Task<List<Loan>> GetOverdueLoansAsync()
+        public async Task<List<Borrow>> GetOverdueBorrowsAsync()
         {
-            var loans = new List<Loan>();
+            var borrows = new List<Borrow>();
             using var connection = DatabaseHelper.GetConnection();
             await connection.OpenAsync();
 
             const string query = @"
                 SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, s.Section as StudentSection, b.Title as BookTitle 
-                FROM Loans l 
+                FROM Borrows l 
                 JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
                 WHERE l.ReturnDate IS NULL AND l.DueDate < CURRENT_DATE";
@@ -191,9 +191,9 @@ namespace LibraryManagementSystem.Repositories
 
             while (await reader.ReadAsync())
             {
-                loans.Add(new Loan
+                borrows.Add(new Borrow
                 {
-                    LoanId = reader.GetInt32("LoanId"),
+                    BorrowId = reader.GetInt32("BorrowId"),
                     StudentId = reader.GetString("StudentId"),
                     BookId = reader.GetInt32("BookId"),
                     LibrarianId = reader.GetInt32("LibrarianId"),
@@ -205,7 +205,9 @@ namespace LibraryManagementSystem.Repositories
                     BookTitle = reader.GetString("BookTitle")
                 });
             }
-            return loans;
+            return borrows;
         }
     }
 }
+
+

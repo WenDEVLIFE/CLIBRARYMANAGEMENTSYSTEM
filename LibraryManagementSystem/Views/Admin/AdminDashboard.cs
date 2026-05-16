@@ -16,14 +16,14 @@ namespace LibraryManagementSystem.Views.Admin
         private UserRepository _userRepository;
         private BookRepository _bookRepository;
         private StudentRepository _studentRepository;
-        private LoanRepository _loanRepository;
+        private BorrowRepository _BorrowRepository;
 
         public AdminDashboard()
         {
             _userRepository = new UserRepository();
             _bookRepository = new BookRepository();
             _studentRepository = new StudentRepository();
-            _loanRepository = new LoanRepository();
+            _BorrowRepository = new BorrowRepository();
             InitializeComponent();
             LoadOverview();
         }
@@ -161,10 +161,10 @@ namespace LibraryManagementSystem.Views.Admin
                 ReadOnly = true
             };
             
-            var overdue = await _loanRepository.GetOverdueLoansAsync();
+            var overdue = await _BorrowRepository.GetOverdueBorrowsAsync();
             dgvAlerts.DataSource = overdue;
             
-            if (dgvAlerts.Columns["LoanId"] != null) dgvAlerts.Columns["LoanId"].Visible = false;
+            if (dgvAlerts.Columns["BorrowId"] != null) dgvAlerts.Columns["BorrowId"].Visible = false;
             if (dgvAlerts.Columns["BookId"] != null) dgvAlerts.Columns["BookId"].Visible = false;
             if (dgvAlerts.Columns["LibrarianId"] != null) dgvAlerts.Columns["LibrarianId"].Visible = false;
 
@@ -216,3 +216,4 @@ namespace LibraryManagementSystem.Views.Admin
         }
     }
 }
+

@@ -69,11 +69,11 @@ INSERT IGNORE INTO Books (Title, Author, ISBN, Category, IsAvailable) VALUES
 ('Introduction to Algorithms', 'Thomas H. Cormen', '9780262033848', 'Education', TRUE);
 
 -- --------------------------------------------------------
--- Table Structure for 'Loans'
+-- Table Structure for 'Borrows'
 -- Updated to reference the new Students table
 -- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS Loans (
-    LoanId INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Borrows (
+    BorrowId INT AUTO_INCREMENT PRIMARY KEY,
     StudentId VARCHAR(20) NOT NULL,
     BookId INT NOT NULL,
     LibrarianId INT NOT NULL,

@@ -123,20 +123,20 @@ namespace LibraryManagementSystem.Views.Librarian
             lblHeaderTitle.Text = "Librarian Activity Feed";
             pnlMainContent.Controls.Clear();
 
-            var loanRepo = new LoanRepository();
+            var BorrowRepo = new BorrowRepository();
             var bookRepo = new BookRepository();
 
-            int activeLoansCount = (await loanRepo.GetActiveLoansAsync()).Count;
-            int overdueCount = (await loanRepo.GetOverdueLoansAsync()).Count;
+            int activeBorrowsCount = (await BorrowRepo.GetActiveBorrowsAsync()).Count;
+            int overdueCount = (await BorrowRepo.GetOverdueBorrowsAsync()).Count;
             int totalBooks = await bookRepo.GetBookCountAsync();
 
             FlowLayoutPanel flow = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 150 };
             flow.Controls.Add(CreateStatCard("Total Books", totalBooks.ToString(), Color.FromArgb(59, 130, 246)));
-            flow.Controls.Add(CreateStatCard("Active Loans", activeLoansCount.ToString(), Color.FromArgb(16, 185, 129)));
+            flow.Controls.Add(CreateStatCard("Active Borrows", activeBorrowsCount.ToString(), Color.FromArgb(16, 185, 129)));
             flow.Controls.Add(CreateStatCard("Overdue Books", overdueCount.ToString(), Color.FromArgb(239, 68, 68)));
             pnlMainContent.Controls.Add(flow);
 
-            Label lblOverdue = new Label { Text = "Urgent: Overdue Loans", Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 30, Margin = new Padding(0, 20, 0, 10) };
+            Label lblOverdue = new Label { Text = "Urgent: Overdue Borrows", Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 30, Margin = new Padding(0, 20, 0, 10) };
             pnlMainContent.Controls.Add(lblOverdue);
 
             DataGridView dgv = new DataGridView { 
@@ -148,9 +148,9 @@ namespace LibraryManagementSystem.Views.Librarian
                 AllowUserToAddRows = false,
                 ReadOnly = true
             };
-            dgv.DataSource = await loanRepo.GetOverdueLoansAsync();
+            dgv.DataSource = await BorrowRepo.GetOverdueBorrowsAsync();
             
-            if (dgv.Columns["LoanId"] != null) dgv.Columns["LoanId"].Visible = false;
+            if (dgv.Columns["BorrowId"] != null) dgv.Columns["BorrowId"].Visible = false;
             if (dgv.Columns["BookId"] != null) dgv.Columns["BookId"].Visible = false;
             if (dgv.Columns["LibrarianId"] != null) dgv.Columns["LibrarianId"].Visible = false;
 
@@ -185,3 +185,4 @@ namespace LibraryManagementSystem.Views.Librarian
         }
     }
 }
+

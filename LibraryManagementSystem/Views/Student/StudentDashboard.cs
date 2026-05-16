@@ -17,14 +17,14 @@ namespace LibraryManagementSystem.Views.Students
         private Label lblHeaderTitle;
         private Button btnNotifications;
         private NotificationRepository _notificationRepository;
-        private LoanRepository _loanRepository;
+        private BorrowRepository _BorrowRepository;
         private StudentRepository _studentRepository;
         private LibraryManagementSystem.Models.Student? _currentStudent;
 
         public StudentDashboard()
         {
             _notificationRepository = new NotificationRepository();
-            _loanRepository = new LoanRepository();
+            _BorrowRepository = new BorrowRepository();
             _studentRepository = new StudentRepository();
             InitializeComponent();
             InitializeDashboard();
@@ -67,7 +67,7 @@ namespace LibraryManagementSystem.Views.Students
             pnlSidebar.Controls.Add(lblLogo);
 
             AddSidebarButton("Overview", 60, (s, e) => LoadOverview());
-            AddSidebarButton("My Loans", 105, (s, e) => LoadLoans());
+            AddSidebarButton("My Borrows", 105, (s, e) => LoadBorrows());
             
             Button btnLogout = new Button
             {
@@ -214,11 +214,11 @@ namespace LibraryManagementSystem.Views.Students
                 ReadOnly = true
             };
 
-            var allLoans = await _loanRepository.GetAllLoansAsync();
-            var activeLoans = allLoans.Where(l => l.StudentId == _currentStudent.StudentId && l.ReturnDate == null).ToList();
-            dgv.DataSource = activeLoans;
+            var allBorrows = await _BorrowRepository.GetAllBorrowsAsync();
+            var activeBorrows = allBorrows.Where(l => l.StudentId == _currentStudent.StudentId && l.ReturnDate == null).ToList();
+            dgv.DataSource = activeBorrows;
 
-            if (dgv.Columns["LoanId"] != null) dgv.Columns["LoanId"].Visible = false;
+            if (dgv.Columns["BorrowId"] != null) dgv.Columns["BorrowId"].Visible = false;
             if (dgv.Columns["StudentId"] != null) dgv.Columns["StudentId"].Visible = false;
             if (dgv.Columns["BookId"] != null) dgv.Columns["BookId"].Visible = false;
             if (dgv.Columns["LibrarianId"] != null) dgv.Columns["LibrarianId"].Visible = false;
@@ -227,7 +227,7 @@ namespace LibraryManagementSystem.Views.Students
             pnlMainContent.Controls.Add(dgv);
         }
 
-        private async void LoadLoans()
+        private async void LoadBorrows()
         {
             lblHeaderTitle.Text = "My Borrowing History";
             pnlMainContent.Controls.Clear();
@@ -242,12 +242,12 @@ namespace LibraryManagementSystem.Views.Students
                 ReadOnly = true
             };
  
-            var allLoans = await _loanRepository.GetAllLoansAsync();
-            var studentLoans = allLoans.Where(l => l.StudentId == _currentStudent?.StudentId).ToList();
-            dgv.DataSource = studentLoans;
+            var allBorrows = await _BorrowRepository.GetAllBorrowsAsync();
+            var studentBorrows = allBorrows.Where(l => l.StudentId == _currentStudent?.StudentId).ToList();
+            dgv.DataSource = studentBorrows;
 
             // Configure Columns
-            if (dgv.Columns["LoanId"] != null) dgv.Columns["LoanId"].Visible = false;
+            if (dgv.Columns["BorrowId"] != null) dgv.Columns["BorrowId"].Visible = false;
             if (dgv.Columns["StudentId"] != null) dgv.Columns["StudentId"].Visible = false;
             if (dgv.Columns["BookId"] != null) dgv.Columns["BookId"].Visible = false;
             if (dgv.Columns["LibrarianId"] != null) dgv.Columns["LibrarianId"].Visible = false;
@@ -259,3 +259,4 @@ namespace LibraryManagementSystem.Views.Students
         }
     }
 }
+

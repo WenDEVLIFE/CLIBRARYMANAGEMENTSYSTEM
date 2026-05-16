@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace LibraryManagementSystem.Views.Librarian
 {
-    public partial class LoanForm : Form
+    public partial class BorrowForm : Form
     {
         private ComboBox cbStudents;
         private ComboBox cbBooks;
@@ -16,9 +16,9 @@ namespace LibraryManagementSystem.Views.Librarian
         private StudentRepository _studentRepository;
         private BookRepository _bookRepository;
 
-        public Loan? NewLoan { get; private set; }
+        public Borrow? NewBorrow { get; private set; }
 
-        public LoanForm()
+        public BorrowForm()
         {
             _studentRepository = new StudentRepository();
             _bookRepository = new BookRepository();
@@ -28,7 +28,7 @@ namespace LibraryManagementSystem.Views.Librarian
 
         private void InitializeComponent()
         {
-            this.Text = "Record New Loan";
+            this.Text = "Record New Borrow";
             this.Size = new Size(400, 400);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
@@ -44,7 +44,7 @@ namespace LibraryManagementSystem.Views.Librarian
             dtpDueDate = new DateTimePicker { Location = new Point(30, 215), Width = 320, Value = DateTime.Now.AddDays(14) };
 
             btnBorrow = new Button { 
-                Text = "Confirm Loan", 
+                Text = "Confirm Borrow", 
                 Location = new Point(30, 280), 
                 Width = 320, 
                 Height = 40, 
@@ -81,7 +81,7 @@ namespace LibraryManagementSystem.Views.Librarian
                 return;
             }
 
-            NewLoan = new Loan
+            NewBorrow = new Borrow
             {
                 StudentId = cbStudents.SelectedValue?.ToString() ?? string.Empty,
                 BookId = (int)cbBooks.SelectedValue,
@@ -94,3 +94,4 @@ namespace LibraryManagementSystem.Views.Librarian
         }
     }
 }
+

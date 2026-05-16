@@ -1,8 +1,8 @@
 namespace LibraryManagementSystem.Models
 {
-    public class Loan
+    public class Borrow
     {
-        public int LoanId { get; set; }
+        public int BorrowId { get; set; }
         public string StudentId { get; set; } = string.Empty;
         public int BookId { get; set; }
         public int LibrarianId { get; set; }

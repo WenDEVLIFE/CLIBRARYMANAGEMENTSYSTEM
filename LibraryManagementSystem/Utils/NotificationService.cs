@@ -8,31 +8,31 @@ namespace LibraryManagementSystem.Utils
 {
     public class NotificationService
     {
-        private readonly LoanRepository _loanRepository;
+        private readonly BorrowRepository _BorrowRepository;
         private readonly NotificationRepository _notificationRepository;
 
         public NotificationService()
         {
-            _loanRepository = new LoanRepository();
+            _BorrowRepository = new BorrowRepository();
             _notificationRepository = new NotificationRepository();
         }
 
         public async Task ProcessDueNotificationsAsync()
         {
-            // 1. Check for Overdue Loans
-            var overdueLoans = await _loanRepository.GetOverdueLoansAsync();
-            foreach (var loan in overdueLoans)
+            // 1. Check for Overdue Borrows
+            var overdueBorrows = await _BorrowRepository.GetOverdueBorrowsAsync();
+            foreach (var Borrow in overdueBorrows)
             {
-                string message = $"OVERDUE: The book '{loan.BookTitle}' was due on {loan.DueDate:MMM dd, yyyy}. Please return it immediately.";
-                await CreateNotificationIfNotExists(loan.StudentId, message, NotificationType.ReturnReminder);
+                string message = $"OVERDUE: The book '{Borrow.BookTitle}' was due on {Borrow.DueDate:MMM dd, yyyy}. Please return it immediately.";
+                await CreateNotificationIfNotExists(Borrow.StudentId, message, NotificationType.ReturnReminder);
             }
 
-            // 2. Check for Loans due within 3 days
-            var upcomingLoans = await _loanRepository.GetUpcomingDueLoansAsync(3);
-            foreach (var loan in upcomingLoans)
+            // 2. Check for Borrows due within 3 days
+            var upcomingBorrows = await _BorrowRepository.GetUpcomingDueBorrowsAsync(3);
+            foreach (var Borrow in upcomingBorrows)
             {
-                string message = $"REMINDER: The book '{loan.BookTitle}' is due soon ({loan.DueDate:MMM dd, yyyy}).";
-                await CreateNotificationIfNotExists(loan.StudentId, message, NotificationType.ReturnReminder);
+                string message = $"REMINDER: The book '{Borrow.BookTitle}' is due soon ({Borrow.DueDate:MMM dd, yyyy}).";
+                await CreateNotificationIfNotExists(Borrow.StudentId, message, NotificationType.ReturnReminder);
             }
         }
 
@@ -52,3 +52,4 @@ namespace LibraryManagementSystem.Utils
         }
     }
 }
+
