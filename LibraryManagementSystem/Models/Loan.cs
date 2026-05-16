@@ -3,7 +3,7 @@ namespace LibraryManagementSystem.Models
     public class Loan
     {
         public int LoanId { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; } = string.Empty;
         public int BookId { get; set; }
         public int LibrarianId { get; set; }
         public DateTime BorrowDate { get; set; }

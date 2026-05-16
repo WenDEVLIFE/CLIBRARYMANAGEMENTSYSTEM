@@ -13,14 +13,14 @@ namespace LibraryManagementSystem.Views.Librarian
         private ComboBox cbBooks;
         private DateTimePicker dtpDueDate;
         private Button btnBorrow;
-        private UserRepository _userRepository;
+        private StudentRepository _studentRepository;
         private BookRepository _bookRepository;
 
         public Loan? NewLoan { get; private set; }
 
         public LoanForm()
         {
-            _userRepository = new UserRepository();
+            _studentRepository = new StudentRepository();
             _bookRepository = new BookRepository();
             InitializeComponent();
             LoadData();
@@ -61,10 +61,10 @@ namespace LibraryManagementSystem.Views.Librarian
 
         private async void LoadData()
         {
-            var students = await _userRepository.GetUsersByRoleAsync(UserRole.Student);
+            var students = await _studentRepository.GetAllStudentsAsync();
             cbStudents.DataSource = students;
-            cbStudents.DisplayMember = "Username";
-            cbStudents.ValueMember = "UserId";
+            cbStudents.DisplayMember = "FullName";
+            cbStudents.ValueMember = "StudentId";
 
             var allBooks = await _bookRepository.GetAllBooksAsync();
             var availableBooks = allBooks.FindAll(b => b.IsAvailable);
@@ -83,7 +83,7 @@ namespace LibraryManagementSystem.Views.Librarian
 
             NewLoan = new Loan
             {
-                StudentId = (int)cbStudents.SelectedValue,
+                StudentId = cbStudents.SelectedValue?.ToString() ?? string.Empty,
                 BookId = (int)cbBooks.SelectedValue,
                 BorrowDate = DateTime.Now,
                 DueDate = dtpDueDate.Value

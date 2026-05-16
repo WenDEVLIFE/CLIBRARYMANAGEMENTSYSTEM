@@ -74,9 +74,9 @@ namespace LibraryManagementSystem.Repositories
             await connection.OpenAsync();
 
             const string query = @"
-                SELECT l.*, u.Username as StudentName, b.Title as BookTitle 
+                SELECT l.*, CONCAT(s.FirstName, ' ', s.LastName) as StudentName, b.Title as BookTitle 
                 FROM Loans l 
-                JOIN Users u ON l.StudentId = u.UserId 
+                JOIN Students s ON l.StudentId = s.StudentId 
                 JOIN Books b ON l.BookId = b.BookId 
                 WHERE l.ReturnDate IS NULL";
             
@@ -88,7 +88,7 @@ namespace LibraryManagementSystem.Repositories
                 loans.Add(new Loan
                 {
                     LoanId = reader.GetInt32("LoanId"),
-                    StudentId = reader.GetInt32("StudentId"),
+                    StudentId = reader.GetString("StudentId"),
                     BookId = reader.GetInt32("BookId"),
                     LibrarianId = reader.GetInt32("LibrarianId"),
                     BorrowDate = reader.GetDateTime("BorrowDate"),

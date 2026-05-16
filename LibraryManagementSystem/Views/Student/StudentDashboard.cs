@@ -141,7 +141,9 @@ namespace LibraryManagementSystem.Views.Student
         private async void RefreshNotificationCount()
         {
             if (Session.CurrentUser == null) return;
-            var notes = await _notificationRepository.GetByUserIdAsync(Session.CurrentUser.UserId);
+            // Note: Currently students don't log in via Users table. 
+            // This logic may need update if StudentId is used for session.
+            var notes = await _notificationRepository.GetByStudentIdAsync(Session.CurrentUser.UserId.ToString());
             int unread = notes.Count(n => !n.IsRead);
             btnNotifications.Text = $"🔔 ({unread})";
             btnNotifications.ForeColor = unread > 0 ? Color.Red : Color.Black;
@@ -150,7 +152,7 @@ namespace LibraryManagementSystem.Views.Student
         private async void ShowNotifications(object sender, EventArgs e)
         {
             if (Session.CurrentUser == null) return;
-            var notes = await _notificationRepository.GetByUserIdAsync(Session.CurrentUser.UserId);
+            var notes = await _notificationRepository.GetByStudentIdAsync(Session.CurrentUser.UserId.ToString());
             
             Form noteForm = new Form { Text = "Notifications", Size = new Size(300, 400), StartPosition = FormStartPosition.CenterParent };
             ListBox lb = new ListBox { Dock = DockStyle.Fill };
@@ -192,7 +194,7 @@ namespace LibraryManagementSystem.Views.Student
             };
 
             var allLoans = await _loanRepository.GetActiveLoansAsync();
-            var studentLoans = allLoans.Where(l => l.StudentId == Session.CurrentUser?.UserId).ToList();
+            var studentLoans = allLoans.Where(l => l.StudentId == Session.CurrentUser?.UserId.ToString()).ToList();
             dgv.DataSource = studentLoans;
 
             pnlMainContent.Controls.Add(dgv);

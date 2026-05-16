@@ -45,7 +45,6 @@ namespace LibraryManagementSystem.Views.Auth
                     {
                         UserRole.Admin => new AdminDashboard(),
                         UserRole.Librarian => new LibrarianDashboard(),
-                        UserRole.Student => new StudentDashboard(),
                         _ => throw new Exception("Invalid user role.")
                     };
 

@@ -115,5 +115,15 @@ namespace LibraryManagementSystem.Repositories
             }
             return books;
         }
+        public async Task<int> GetBookCountAsync()
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = "SELECT COUNT(*) FROM Books";
+            using var command = new MySqlCommand(query, connection);
+            var result = await command.ExecuteScalarAsync();
+            return Convert.ToInt32(result);
+        }
     }
 }

@@ -15,11 +15,13 @@ namespace LibraryManagementSystem.Views.Admin
         private Label lblHeaderTitle;
         private UserRepository _userRepository;
         private BookRepository _bookRepository;
+        private StudentRepository _studentRepository;
 
         public AdminDashboard()
         {
             _userRepository = new UserRepository();
             _bookRepository = new BookRepository();
+            _studentRepository = new StudentRepository();
             InitializeComponent();
             LoadOverview();
         }
@@ -128,9 +130,8 @@ namespace LibraryManagementSystem.Views.Admin
             pnlMainContent.Controls.Clear();
 
             int librarianCount = await _userRepository.GetUserCountByRoleAsync(UserRole.Librarian);
-            int studentCount = await _userRepository.GetUserCountByRoleAsync(UserRole.Student);
-            var books = await _bookRepository.GetAllBooksAsync();
-            int bookCount = books.Count;
+            int studentCount = await _studentRepository.GetStudentCountAsync();
+            int bookCount = await _bookRepository.GetBookCountAsync();
 
             FlowLayoutPanel flow = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 150 };
             flow.Controls.Add(CreateStatCard("Total Books", bookCount.ToString(), Color.FromArgb(59, 130, 246)));
