@@ -45,11 +45,20 @@ namespace LibraryManagementSystem.Views.Auth
                     {
                         UserRole.Admin => new AdminDashboard(),
                         UserRole.Librarian => new LibrarianDashboard(),
+                        UserRole.Student => new StudentDashboard(),
                         _ => throw new Exception("Invalid user role.")
                     };
 
                     dashboard.Show();
-                    dashboard.FormClosed += (s, args) => this.Close();
+                    dashboard.FormClosed += (s, args) => 
+                    {
+                        Session.CurrentUser = null;
+                        txtUsername.Clear();
+                        txtPassword.Clear();
+                        this.Show();
+                        btnLogin.Enabled = true;
+                        btnLogin.Text = "Login";
+                    };
                 }
                 else
                 {

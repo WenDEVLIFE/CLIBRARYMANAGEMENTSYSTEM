@@ -22,6 +22,7 @@ namespace LibraryManagementSystem.Repositories
                 students.Add(new Student
                 {
                     StudentId = reader.GetString("StudentId"),
+                    UserId = reader.GetInt32("UserId"),
                     FirstName = reader.GetString("FirstName"),
                     LastName = reader.GetString("LastName"),
                     Section = reader.GetString("Section"),

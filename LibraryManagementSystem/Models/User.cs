@@ -3,7 +3,8 @@ namespace LibraryManagementSystem.Models
     public enum UserRole
     {
         Admin,
-        Librarian
+        Librarian,
+        Student
     }
 
     public class User

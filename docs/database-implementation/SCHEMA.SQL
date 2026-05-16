@@ -7,42 +7,48 @@ CREATE DATABASE IF NOT EXISTS LibraryManagementSystemDB;
 USE LibraryManagementSystemDB;
 
 -- --------------------------------------------------------
--- Table Structure for 'Users' (Staff Only)
--- Roles: 'Admin', 'Librarian'
+-- Table Structure for 'Users'
+-- Roles: 'Admin', 'Librarian', 'Student'
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS Users (
     UserId INT AUTO_INCREMENT PRIMARY KEY,
     Username VARCHAR(50) NOT NULL UNIQUE,
     PasswordHash VARCHAR(255) NOT NULL,
     Email VARCHAR(100),
-    Role ENUM('Admin', 'Librarian') NOT NULL,
+    Role ENUM('Admin', 'Librarian', 'Student') NOT NULL,
     CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT IGNORE INTO Users (Username, PasswordHash, Email, Role) 
-VALUES ('admin', 'admin123', 'admin@library.com', 'Admin'),
-       ('sarah_lib', 'lib123', 'sarah@library.com', 'Librarian');
+INSERT IGNORE INTO Users (UserId, Username, PasswordHash, Email, Role) 
+VALUES (1, 'admin', 'admin123', 'admin@library.com', 'Admin'),
+       (2, 'sarah_lib', 'lib123', 'sarah@library.com', 'Librarian'),
+       (3, '2026-0001', 'student123', 'hailey@student.com', 'Student'),
+       (4, '2026-0002', 'student123', 'jeneyah@student.com', 'Student'),
+       (5, '2026-0003', 'student123', 'angel@student.com', 'Student'),
+       (6, '2026-0004', 'student123', 'angela@student.com', 'Student'),
+       (7, '2026-0005', 'student123', 'princess@student.com', 'Student');
 
 -- --------------------------------------------------------
--- Table Structure for 'Students' (Dedicated Table)
+-- Table Structure for 'Students' (Dedicated Table Linked to Users)
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS Students (
     StudentId VARCHAR(20) PRIMARY KEY,
+    UserId INT UNIQUE NOT NULL,
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     Section VARCHAR(10) NOT NULL,
     IsActive BOOLEAN DEFAULT TRUE,
-    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE
 );
 
 -- Seed Data: ACT-1B Students
--- Note: Dummy ID numbers provided; replace with actual student IDs
-INSERT IGNORE INTO Students (StudentId, FirstName, LastName, Section) VALUES 
-('2026-0001', 'Hailey', 'Buenaventura', 'ACT-1B'),
-('2026-0002', 'Jeneyah', 'Ariraya', 'ACT-1B'),
-('2026-0003', 'Angel', 'Laxama', 'ACT-1B'),
-('2026-0004', 'Angela', 'Suba', 'ACT-1B'),
-('2026-0005', 'Princess', 'Azada', 'ACT-1B');
+INSERT IGNORE INTO Students (StudentId, UserId, FirstName, LastName, Section) VALUES 
+('2026-0001', 3, 'Hailey', 'Buenaventura', 'ACT-1B'),
+('2026-0002', 4, 'Jeneyah', 'Ariraya', 'ACT-1B'),
+('2026-0003', 5, 'Angel', 'Laxama', 'ACT-1B'),
+('2026-0004', 6, 'Angela', 'Suba', 'ACT-1B'),
+('2026-0005', 7, 'Princess', 'Azada', 'ACT-1B');
 
 -- --------------------------------------------------------
 -- Table Structure for 'Books'

@@ -62,7 +62,7 @@ namespace LibraryManagementSystem.Views.Auth
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Library Management System";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblTitle.Click += lblTitle_Click;
+    
             // 
             // pnlLogin
             // 
