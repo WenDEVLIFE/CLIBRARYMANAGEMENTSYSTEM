@@ -19,15 +19,15 @@
     - `[x]` Session/Role handling (determining which dashboard to open)
 
 ## 3. Admin Module
-- `[ ]` Admin Dashboard UI
-    - `[ ]` Navigation Sidebar & Header
-    - `[ ]` Stats Cards (Total Books, Librarians, Students)
-- `[ ]` Librarian Management
-    - `[ ]` **UI**: Librarian List View & Registration Form
-    - `[ ]` **DB**: `CreateLibrarian`, `UpdateLibrarian`, `DeleteLibrarian` functions
-- `[ ]` Book Management
-    - `[ ]` **UI**: Book List View & Add/Edit Book Dialog
-    - `[ ]` **DB**: `AddBook`, `EditBook`, `DeleteBook` functions
+- `[x]` Admin Dashboard UI
+    - `[x]` Navigation Sidebar & Header
+    - `[x]` Stats Cards (Total Books, Librarians, Students)
+- `[x]` Librarian Management
+    - `[x]` **UI**: Librarian List View & Registration Form
+    - `[x]` **DB**: `CreateLibrarian`, `UpdateLibrarian`, `DeleteLibrarian` functions
+- `[x]` Book Management
+    - `[x]` **UI**: Book List View & Add/Edit Book Dialog
+    - `[x]` **DB**: `AddBook`, `EditBook`, `DeleteBook` functions
 
 ## 4. Librarian Module
 - `[ ]` Librarian Dashboard UI

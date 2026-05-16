@@ -69,5 +69,57 @@ namespace LibraryManagementSystem.Repositories
             var result = await command.ExecuteScalarAsync();
             return Convert.ToInt32(result);
         }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = "UPDATE Users SET Username = @username, Email = @email, Role = @role WHERE UserId = @userId";
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@username", user.Username);
+            command.Parameters.AddWithValue("@email", user.Email);
+            command.Parameters.AddWithValue("@role", user.Role.ToString());
+            command.Parameters.AddWithValue("@userId", user.UserId);
+
+            return await command.ExecuteNonQueryAsync() > 0;
+        }
+
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = "DELETE FROM Users WHERE UserId = @userId";
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", userId);
+
+            return await command.ExecuteNonQueryAsync() > 0;
+        }
+
+        public async Task<List<User>> GetUsersByRoleAsync(UserRole role)
+        {
+            var users = new List<User>();
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = "SELECT * FROM Users WHERE Role = @role";
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@role", role.ToString());
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                users.Add(new User
+                {
+                    UserId = reader.GetInt32("UserId"),
+                    Username = reader.GetString("Username"),
+                    Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
+                    Role = Enum.Parse<UserRole>(reader.GetString("Role")),
+                    CreatedAt = reader.GetDateTime("CreatedAt")
+                });
+            }
+            return users;
+        }
     }
 }
