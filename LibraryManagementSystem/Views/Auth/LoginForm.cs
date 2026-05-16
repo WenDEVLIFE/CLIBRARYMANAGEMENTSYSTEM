@@ -4,7 +4,7 @@ using LibraryManagementSystem.Repositories;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Views.Admin;
 using LibraryManagementSystem.Views.Librarian;
-using LibraryManagementSystem.Views.Student;
+using LibraryManagementSystem.Views.Students;
 using LibraryManagementSystem.Utils;
 
 namespace LibraryManagementSystem.Views.Auth

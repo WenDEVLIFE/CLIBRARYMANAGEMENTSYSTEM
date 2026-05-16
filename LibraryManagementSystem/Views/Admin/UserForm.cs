@@ -6,25 +6,28 @@ using LibraryManagementSystem.Utils;
 
 namespace LibraryManagementSystem.Views.Admin
 {
-    public partial class LibrarianForm : Form
+    public partial class UserForm : Form
     {
         private TextBox txtUsername;
         private TextBox txtEmail;
         private TextBox txtPassword;
         private Button btnSave;
         private Label lblPassword;
-        public User? Librarian { get; private set; }
+        public User? User { get; private set; }
         private bool _isEdit;
+        private UserRole _role;
 
-        public LibrarianForm(User? librarian = null)
+        public UserForm(UserRole role, User? user = null)
         {
-            Librarian = librarian;
-            _isEdit = librarian != null;
+            User = user;
+            _isEdit = user != null;
+            _role = role;
             InitializeComponent();
-            if (_isEdit && librarian != null)
+            
+            if (_isEdit && user != null)
             {
-                txtUsername.Text = librarian.Username;
-                txtEmail.Text = librarian.Email;
+                txtUsername.Text = user.Username;
+                txtEmail.Text = user.Email;
                 txtPassword.Visible = false;
                 lblPassword.Visible = false;
                 this.Height -= 60;
@@ -34,7 +37,8 @@ namespace LibraryManagementSystem.Views.Admin
 
         private void InitializeComponent()
         {
-            this.Text = _isEdit ? "Edit Librarian" : "Add Librarian";
+            string roleName = _role.ToString();
+            this.Text = _isEdit ? $"Edit {roleName}" : $"Add {roleName}";
             this.Size = new Size(400, 450);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
@@ -50,11 +54,11 @@ namespace LibraryManagementSystem.Views.Admin
             txtPassword = new TextBox { Location = new Point(30, 195), Width = 320, Font = new Font("Segoe UI", 10), PasswordChar = '*' };
 
             btnSave = new Button { 
-                Text = "Save Librarian", 
+                Text = $"Save {roleName}", 
                 Location = new Point(30, 260), 
                 Width = 320, 
                 Height = 40, 
-                BackColor = Color.FromArgb(16, 185, 129), 
+                BackColor = Color.FromArgb(59, 130, 246), 
                 ForeColor = Color.White, 
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold)
@@ -87,17 +91,17 @@ namespace LibraryManagementSystem.Views.Admin
 
             if (_isEdit)
             {
-                Librarian!.Username = txtUsername.Text.Trim();
-                Librarian!.Email = txtEmail.Text.Trim();
+                User!.Username = txtUsername.Text.Trim();
+                User!.Email = txtEmail.Text.Trim();
             }
             else
             {
-                Librarian = new User
+                User = new User
                 {
                     Username = txtUsername.Text.Trim(),
                     Email = txtEmail.Text.Trim(),
                     PasswordHash = PasswordHasher.HashPassword(txtPassword.Text.Trim()),
-                    Role = UserRole.Librarian
+                    Role = _role
                 };
             }
 

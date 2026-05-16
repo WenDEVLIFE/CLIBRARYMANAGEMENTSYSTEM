@@ -8,17 +8,17 @@ using LibraryManagementSystem.Utils;
 
 namespace LibraryManagementSystem.Views.Admin
 {
-    public class LibrarianManagementControl : UserControl
+    public class AdminManagementControl : UserControl
     {
-        private DataGridView dgvLibrarians;
+        private DataGridView dgvAdmins;
         private Button btnAdd;
         private UserRepository _userRepository;
 
-        public LibrarianManagementControl()
+        public AdminManagementControl()
         {
             _userRepository = new UserRepository();
             InitializeComponent();
-            LoadLibrarians();
+            LoadAdmins();
         }
 
         private void InitializeComponent()
@@ -28,7 +28,7 @@ namespace LibraryManagementSystem.Views.Admin
 
             Panel pnlToolbar = new Panel { Dock = DockStyle.Top, Height = 60, Padding = new Padding(10) };
             btnAdd = new Button { 
-                Text = "+ Add Librarian", 
+                Text = "+ Add Admin", 
                 Width = 150, 
                 Height = 35, 
                 BackColor = Color.FromArgb(59, 130, 246), 
@@ -38,15 +38,15 @@ namespace LibraryManagementSystem.Views.Admin
             };
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.Click += (s, e) => {
-                var form = new UserForm(UserRole.Librarian);
+                var form = new UserForm(UserRole.Admin);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    SaveLibrarian(form.User!);
+                    SaveAdmin(form.User!);
                 }
             };
             pnlToolbar.Controls.Add(btnAdd);
 
-            dgvLibrarians = new DataGridView { 
+            dgvAdmins = new DataGridView { 
                 Dock = DockStyle.Fill, 
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
@@ -56,47 +56,46 @@ namespace LibraryManagementSystem.Views.Admin
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 RowHeadersVisible = false
             };
-            dgvLibrarians.CellDoubleClick += (s, e) => {
-                if (e.RowIndex >= 0) EditLibrarian((User)dgvLibrarians.Rows[e.RowIndex].DataBoundItem);
+            dgvAdmins.CellDoubleClick += (s, e) => {
+                if (e.RowIndex >= 0) EditAdmin((User)dgvAdmins.Rows[e.RowIndex].DataBoundItem);
             };
 
-            this.Controls.Add(dgvLibrarians);
+            this.Controls.Add(dgvAdmins);
             this.Controls.Add(pnlToolbar);
         }
 
-        private async void LoadLibrarians()
+        private async void LoadAdmins()
         {
-            var librarians = await _userRepository.GetUsersByRoleAsync(UserRole.Librarian);
-            dgvLibrarians.DataSource = librarians;
+            var admins = await _userRepository.GetUsersByRoleAsync(UserRole.Admin);
+            dgvAdmins.DataSource = admins;
             
-            // Hide password hash for security
-            if (dgvLibrarians.Columns["PasswordHash"] != null) dgvLibrarians.Columns["PasswordHash"].Visible = false;
+            if (dgvAdmins.Columns["PasswordHash"] != null) dgvAdmins.Columns["PasswordHash"].Visible = false;
         }
 
-        private async void SaveLibrarian(User librarian)
+        private async void SaveAdmin(User admin)
         {
-            bool success = await _userRepository.AddUserAsync(librarian);
+            bool success = await _userRepository.AddUserAsync(admin);
             if (success)
             {
-                MessageBox.Show("Librarian added successfully.");
-                LoadLibrarians();
+                MessageBox.Show("Admin added successfully.");
+                LoadAdmins();
             }
             else
             {
-                MessageBox.Show("Failed to add librarian.");
+                MessageBox.Show("Failed to add admin.");
             }
         }
 
-        private async void EditLibrarian(User librarian)
+        private async void EditAdmin(User admin)
         {
-            var form = new UserForm(UserRole.Librarian, librarian);
+            var form = new UserForm(UserRole.Admin, admin);
             if (form.ShowDialog() == DialogResult.OK)
             {
                 bool success = await _userRepository.UpdateUserAsync(form.User!);
                 if (success)
                 {
-                    MessageBox.Show("Librarian updated successfully.");
-                    LoadLibrarians();
+                    MessageBox.Show("Admin updated successfully.");
+                    LoadAdmins();
                 }
             }
         }

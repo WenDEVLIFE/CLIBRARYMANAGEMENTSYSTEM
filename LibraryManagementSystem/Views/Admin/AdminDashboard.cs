@@ -54,7 +54,9 @@ namespace LibraryManagementSystem.Views.Admin
 
             AddSidebarButton("Overview", 60, (s, e) => LoadOverview());
             AddSidebarButton("Librarians", 105, (s, e) => LoadLibrarianManagement());
-            AddSidebarButton("Books", 150, (s, e) => LoadBookManagement());
+            AddSidebarButton("Students", 150, (s, e) => LoadStudentManagement());
+            AddSidebarButton("Admins", 195, (s, e) => LoadAdminManagement());
+            AddSidebarButton("Books", 240, (s, e) => LoadBookManagement());
             
             Button btnLogout = new Button
             {
@@ -162,6 +164,20 @@ namespace LibraryManagementSystem.Views.Admin
             lblHeaderTitle.Text = "Librarian Management";
             pnlMainContent.Controls.Clear();
             pnlMainContent.Controls.Add(new LibrarianManagementControl());
+        }
+
+        private void LoadStudentManagement()
+        {
+            lblHeaderTitle.Text = "Student Management";
+            pnlMainContent.Controls.Clear();
+            pnlMainContent.Controls.Add(new StudentManagementControl());
+        }
+
+        private void LoadAdminManagement()
+        {
+            lblHeaderTitle.Text = "Administrator Management";
+            pnlMainContent.Controls.Clear();
+            pnlMainContent.Controls.Add(new AdminManagementControl());
         }
 
         private void LoadBookManagement()

@@ -7,7 +7,7 @@ using LibraryManagementSystem.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LibraryManagementSystem.Views.Student
+namespace LibraryManagementSystem.Views.Students
 {
     public partial class StudentDashboard : Form
     {
