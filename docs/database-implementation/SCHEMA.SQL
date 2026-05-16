@@ -69,3 +69,25 @@ CREATE TABLE IF NOT EXISTS Notifications (
     CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE
 );
+-- --------------------------------------------------------
+-- Seed Data for Testing
+-- --------------------------------------------------------
+
+-- Sample Librarian
+INSERT IGNORE INTO Users (Username, PasswordHash, Email, Role) 
+VALUES ('sarah_lib', 'lib123', 'sarah@library.com', 'Librarian');
+
+-- Sample Student
+INSERT IGNORE INTO Users (Username, PasswordHash, Email, Role) 
+VALUES ('john_doe', 'student123', 'john@student.com', 'Student');
+
+-- Sample Books
+INSERT IGNORE INTO Books (Title, Author, ISBN, Category, IsAvailable) VALUES 
+('The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 'Fiction', TRUE),
+('Introduction to Algorithms', 'Thomas H. Cormen', '9780262033848', 'Education', TRUE),
+('The Pragmatic Programmer', 'Andrew Hunt', '9780201616224', 'Computing', TRUE),
+('Clean Code', 'Robert C. Martin', '9780132350884', 'Computing', TRUE);
+
+-- Sample Notification for Student
+INSERT IGNORE INTO Notifications (UserId, Message, Type) 
+VALUES (3, 'Welcome to Scholar Central! You can now borrow books.', 'BorrowConfirmation');
