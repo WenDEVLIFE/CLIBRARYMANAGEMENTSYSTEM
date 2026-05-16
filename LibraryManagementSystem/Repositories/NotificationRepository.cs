@@ -45,5 +45,16 @@ namespace LibraryManagementSystem.Repositories
             }
             return notifications;
         }
+        public async Task<bool> MarkAsReadAsync(int notificationId)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            await connection.OpenAsync();
+
+            const string query = "UPDATE Notifications SET IsRead = TRUE WHERE NotificationId = @id";
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@id", notificationId);
+
+            return await command.ExecuteNonQueryAsync() > 0;
+        }
     }
 }

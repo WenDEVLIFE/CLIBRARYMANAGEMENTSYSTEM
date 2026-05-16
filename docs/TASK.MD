@@ -41,13 +41,13 @@
     - `[x]` **DB**: `RecordLoan`, `MarkAsReturned`, `UpdateBookAvailability` functions
 
 ## 5. Student Module
-- `[ ]` Student Dashboard UI
-    - `[ ]` Overview of currently borrowed books
-- `[ ]` Notification System
-    - `[ ]` **UI**: Notification Bell & Popup List
-    - `[ ]` **DB**: `GetNotificationsByUserId`, `MarkNotificationAsRead` functions
-- `[ ]` Borrowing History
-    - `[ ]` **UI**: Grid showing past and current loans
+- `[x]` Student Dashboard UI
+    - `[x]` Overview of currently borrowed books
+- `[x]` Notification System
+    - `[x]` **UI**: Notification Bell & Popup List
+    - `[x]` **DB**: `GetNotificationsByUserId`, `MarkNotificationAsRead` functions
+- `[x]` Borrowing History
+    - `[x]` **UI**: Grid showing past and current loans
 
 ## 6. UI/UX & Finalization
 - `[ ]` Theme Implementation
